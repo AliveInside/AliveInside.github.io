@@ -1,0 +1,28 @@
+.box {
+  border-radius: 30px;
+
+  table {
+    min-width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  thead {
+    border-bottom: 2px solid rgba(0, 0, 0, 0.25);
+    background-color: #f0f0f0;
+  }
+
+  th {
+    padding: 20px;
+    text-align: left;
+  }
+
+  tr:nth-child(even) {
+    background-color: #decfff80;
+  }
+
+  td {
+    padding: 20px;
+    text-align: left;
+  }
+}

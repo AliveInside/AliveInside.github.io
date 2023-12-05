@@ -1,14 +1,14 @@
 import React from "react";
 import "./scss/app.scss";
 import { Route, Routes } from "react-router-dom";
-import MainLayout from "./MainLayout";
-import Home from "./pages/Home";
+import MainLayout from "./layouts/MainLayout";
+import Patients from "./pages/Patients";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
-        <Route path="" element={<Home />} />
+        <Route index element={<Patients />} />
       </Route>
     </Routes>
   );

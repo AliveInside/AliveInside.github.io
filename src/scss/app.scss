@@ -3,6 +3,7 @@
 body {
   background-color: #f0f0f0;
   margin: 0;
+  font-family: "Inter", sans-serif;
 }
 
 .wrapper {
@@ -16,7 +17,7 @@ body {
 
 .content {
   width: calc(100vw - 100px);
-  height: 100%;
+  height: auto;
   background-color: #fff;
   margin: 50px auto;
   border-radius: 5px;
@@ -36,5 +37,12 @@ body {
   .container {
     margin: 0 auto;
     width: 90%;
+
+    .page-header {
+      font-weight: 500;
+      font-size: 48px;
+      padding-top: 25px;
+      padding-bottom: 20px;
+    }
   }
 }
