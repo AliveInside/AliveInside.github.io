@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import { redirect } from "react-router";
 
 const LoginBody: FC = () => {
   return (
@@ -13,7 +12,7 @@ const LoginBody: FC = () => {
         <h2 className="default-text">Пароль</h2>
         <input className="input-container" placeholder="Введите пароль" />
       </div>
-      <div>
+      <div className="forget-password">
         <a href="#" className="forget-password-button">
           Забыли пароль?
         </a>

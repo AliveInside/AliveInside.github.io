@@ -2,7 +2,6 @@ import React, { FC } from "react";
 import logo from "../assets/img/logo.svg";
 import logo_text from "../assets/img/logo_text.png";
 import settings from "../assets/img/settings.svg";
-import { redirect } from "react-router";
 
 const Header: FC = () => {
   return (
