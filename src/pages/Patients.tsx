@@ -1,7 +1,8 @@
 import React, { FC, useMemo } from "react";
 import Table from "../components/Table/Table";
-import { ColumnDef } from "@tanstack/react-table";
+import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { usePatients } from "../hooks/usePatients";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { filterFns } from "../components/Table/filterFn";
 
@@ -18,28 +19,23 @@ type Patient = {
 };
 
 const Patients: FC = () => {
+  const navigate = useNavigate();
   const { patients } = usePatients();
 
   const columns = useMemo<ColumnDef<Patient>[]>(
     () => [
       {
-        header: "Фамилия",
-        cell: (row) => row.renderValue(),
-        accessorKey: "lastName",
+        header: "ФИО",
+        cell: (row: CellContext<Patient, any>) => (
+          <span
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate(`/user-surveys/${row.row.original.userId}`)}
+          >
+            {row.renderValue()}
+          </span>
+        ),
+        accessorKey: "fullName",
       },
-
-      {
-        header: "Имя",
-        cell: (row) => row.renderValue(),
-        accessorKey: "firstName",
-      },
-
-      {
-        header: "Отчество",
-        cell: (row) => row.renderValue(),
-        accessorKey: "patronymic",
-      },
-
       {
         header: "Дата рождения",
         cell: ({ getValue }) =>
@@ -52,7 +48,7 @@ const Patients: FC = () => {
         accessorKey: "userGender",
       },
     ],
-    []
+    [navigate]
   );
 
   return (

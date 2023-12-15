@@ -9,7 +9,16 @@ export const usePatients = () => {
     try {
       const apiUrl = `${KDC_URL}/api/v1/admin_panel/patients`;
       const { data } = await axios.get(apiUrl);
-      setPatients(data);
+      const formattedData = data.map(
+        (patient: { lastName: any; firstName: any; patronymic: any }) => {
+          const { lastName, firstName, patronymic } = patient;
+          const fullName = patronymic
+            ? `${lastName} ${firstName} ${patronymic}`
+            : `${lastName} ${firstName}`;
+          return { ...patient, fullName };
+        }
+      );
+      setPatients(formattedData);
     } catch (e) {
       console.log("Error", e);
     }
