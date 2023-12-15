@@ -1,10 +1,11 @@
 .box {
-  border-radius: 30px;
-
   table {
     min-width: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+    // padding-left: 20px;
+    // padding-right: 20px;
+
+    // border-collapse: collapse;
+    border-radius: 30px;
   }
 
   thead {

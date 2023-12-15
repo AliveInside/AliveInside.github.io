@@ -1,25 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
   ColumnDef,
+  FilterFn,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
+import DebouncedInput from "./Input";
+import { filterFns } from "./filterFn";
 
 interface ReactTableProps<T extends object> {
   data: T[];
   columns: ColumnDef<T>[];
+  showGlobalFilter?: boolean;
+  filterFn?: FilterFn<T>;
 }
 
-const Table = <T extends object>({ data, columns }: ReactTableProps<T>) => {
+const Table = <T extends object>({
+  data,
+  columns,
+  showGlobalFilter = false,
+  filterFn = filterFns.fuzzy,
+}: ReactTableProps<T>) => {
+  const [globalFilter, setGlobalFilter] = useState("");
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      globalFilter,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: filterFn,
   });
 
   return (
     <div className="box">
+      {showGlobalFilter ? (
+        <DebouncedInput
+          value={globalFilter ?? ""}
+          onChange={(value) => setGlobalFilter(String(value))}
+          className=""
+          placeholder="Поиск"
+        />
+      ) : null}
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (

@@ -1,7 +1,10 @@
 import React, { FC } from "react";
 import logo from "../assets/img/logo.svg";
 import logo_text from "../assets/img/logo_text.png";
-import settings from "../assets/img/settings.svg";
+import CustomPopup from "./CustomPopup";
+import { TbLogout } from "react-icons/tb";
+import { FaUserDoctor } from "react-icons/fa6";
+// import { Link } from "react-router-dom";
 
 const Header: FC = () => {
   return (
@@ -14,7 +17,37 @@ const Header: FC = () => {
         <div className="header__right">
           <div className="user">Здравствуйте, я незапланированный</div>
           <div className="settings" style={{ marginTop: 10 }}>
-            <img src={settings} alt="" />
+            <CustomPopup>
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                Profile
+                <FaUserDoctor style={{ height: 30, width: 30 }} />
+              </span>
+
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                Logout
+                <TbLogout
+                  style={{ height: 30, width: 30, cursor: "pointer" }}
+                />
+              </span>
+            </CustomPopup>
           </div>
         </div>
       </div>

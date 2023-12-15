@@ -1,44 +1,70 @@
 import React, { FC, useMemo } from "react";
-import SearchBar from "../components/SearchBar";
-import Table from "../components/Table";
-import mData from "../MOCK_DATA.json";
+import Table from "../components/Table/Table";
 import { ColumnDef } from "@tanstack/react-table";
+import { usePatients } from "../hooks/usePatients";
+import moment from "moment";
+import { filterFns } from "../components/Table/filterFn";
 
-type Item = {
-  name: string;
-  born: string;
-  gender: string;
+type Patient = {
+  userSnils: string;
+  firstName: string;
+  lastName: string;
+  patronymic: string;
+  userPhone: string;
+  userId: number;
+  userRole: string;
+  userBirthDate: string;
+  userGender: string;
 };
 
 const Patients: FC = () => {
-  const columns = useMemo<ColumnDef<Item>[]>(
+  const { patients } = usePatients();
+
+  const columns = useMemo<ColumnDef<Patient>[]>(
     () => [
       {
-        header: "Пациент",
+        header: "Фамилия",
         cell: (row) => row.renderValue(),
-        accessorKey: "name",
+        accessorKey: "lastName",
       },
+
+      {
+        header: "Имя",
+        cell: (row) => row.renderValue(),
+        accessorKey: "firstName",
+      },
+
+      {
+        header: "Отчество",
+        cell: (row) => row.renderValue(),
+        accessorKey: "patronymic",
+      },
+
       {
         header: "Дата рождения",
-        cell: (row) => row.renderValue(),
-        accessorKey: "born",
+        cell: ({ getValue }) =>
+          moment(new Date(getValue<any>())).format("DD.MM.YYYY"),
+        accessorKey: "userBirthDate",
       },
       {
         header: "Пол",
         cell: (row) => row.renderValue(),
-        accessorKey: "gender",
+        accessorKey: "userGender",
       },
     ],
     []
   );
 
-  console.log(columns);
-
   return (
     <div className="container">
       <div className="page-header">Пациенты</div>
-      <SearchBar />
-      <Table data={mData} columns={columns} />
+      {/* <SearchBar /> */}
+      <Table
+        data={patients}
+        columns={columns}
+        showGlobalFilter
+        filterFn={filterFns.contains}
+      />
     </div>
   );
 };
