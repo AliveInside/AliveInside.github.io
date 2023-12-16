@@ -19,8 +19,13 @@ type Patient = {
 };
 
 const Patients: FC = () => {
+  const [limit, setLimit] = React.useState(2)
+
+  const handleClick = () => {
+    setLimit(prevLimit => prevLimit + 1);
+  };
   const navigate = useNavigate();
-  const { patients } = usePatients();
+  const { patients } = usePatients(limit);
 
   const columns = useMemo<ColumnDef<Patient>[]>(
     () => [
@@ -61,7 +66,10 @@ const Patients: FC = () => {
         showGlobalFilter
         filterFn={filterFns.contains}
       />
+     <button onClick={handleClick}>Нажми если ты приемный</button>
+
     </div>
+
   );
 };
 
