@@ -33,14 +33,12 @@ const DebouncedInput = ({
   }, [value, onChange, debounceTime]);
 
   return (
-    <div className="searchbar">
-      <div className="search">
-        <input
-          {...props}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-      </div>
+    <div className="search">
+      <input
+        {...props}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
     </div>
   );
 };

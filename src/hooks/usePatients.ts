@@ -1,13 +1,14 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { KDC_URL } from "../KDC_URL";
+import { PatientContext } from "../store/PatientStore";
 
 export const usePatients = (limit?: number) => {
-  const [patients, setPatients] = useState([]);
-  
+  const { patients, dispatch } = useContext(PatientContext);
+
   const fetchPatients = async () => {
     try {
-      const apiUrl = `${KDC_URL}/api/v1/admin_panel/patients?limit=${limit}`;
+      const apiUrl = `${KDC_URL}/api/v1/admin_panel/patients?limit=${limit}&order_direction=ASC`;
       const { data } = await axios.get(apiUrl);
       const formattedData = data.map(
         (patient: { lastName: any; firstName: any; patronymic: any }) => {
@@ -18,7 +19,8 @@ export const usePatients = (limit?: number) => {
           return { ...patient, fullName };
         }
       );
-      setPatients(formattedData);
+
+      dispatch({ patients: formattedData });
     } catch (e) {
       console.log("Error", e);
     }
@@ -26,6 +28,7 @@ export const usePatients = (limit?: number) => {
 
   useEffect(() => {
     fetchPatients();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit]);
 
   return { patients };

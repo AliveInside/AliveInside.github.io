@@ -6,6 +6,7 @@ import {
   ColumnDef,
   FilterFn,
   getFilteredRowModel,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 import DebouncedInput from "./Input";
 import { filterFns } from "./filterFn";
@@ -15,6 +16,7 @@ interface ReactTableProps<T extends object> {
   columns: ColumnDef<T>[];
   showGlobalFilter?: boolean;
   filterFn?: FilterFn<T>;
+  showNavigation?: boolean;
 }
 
 const Table = <T extends object>({
@@ -22,6 +24,7 @@ const Table = <T extends object>({
   columns,
   showGlobalFilter = false,
   filterFn = filterFns.fuzzy,
+  showNavigation = true,
 }: ReactTableProps<T>) => {
   const [globalFilter, setGlobalFilter] = useState("");
 
@@ -29,7 +32,7 @@ const Table = <T extends object>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-
+    getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       globalFilter,
@@ -41,13 +44,29 @@ const Table = <T extends object>({
   return (
     <div className="box">
       {showGlobalFilter ? (
-        <DebouncedInput
-          value={globalFilter ?? ""}
-          onChange={(value) => setGlobalFilter(String(value))}
-          className=""
-          placeholder="Поиск"
-        />
+        <div className="searchbar">
+          <DebouncedInput
+            value={globalFilter ?? ""}
+            onChange={(value) => setGlobalFilter(String(value))}
+            className=""
+            placeholder="Поиск"
+          />
+
+          <select
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
+            }}
+          >
+            {[5, 10, 15, 20, 25].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
       ) : null}
+
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -76,6 +95,24 @@ const Table = <T extends object>({
             </tr>
           ))}
         </tbody>
+        {showNavigation ? (
+          <>
+            <button
+              className=""
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              {"<"}
+            </button>
+            <button
+              className=""
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              {">"}
+            </button>
+          </>
+        ) : null}
       </table>
     </div>
   );
