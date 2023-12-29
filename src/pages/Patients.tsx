@@ -1,18 +1,25 @@
-import React, { FC, useContext, useEffect, useMemo } from "react";
+import React, { FC, useContext, useEffect, useMemo, useState } from "react";
 import Table from "../components/Table/Table";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { usePatients } from "../hooks/usePatients";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { filterFns } from "../components/Table/filterFn";
 import { IPatient } from "../store/types";
 import { PatientContext } from "../store/PatientStore";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const Patients: FC = () => {
-  const [limit, setLimit] = React.useState(10);
+  const [limit, setLimit] = useState(10);
+  const [hasPatientChanged, setHasPatientChanged] = useState(false);
 
+  // функция, для сохранения пациента в локал стор
+  const { setItem } = useLocalStorage("patient");
+
+  // получаем пациентов с бэка
   const { patients } = usePatients(limit);
 
+  // получаем пациента и диспатч из контекста
   const { patient, dispatch } = useContext(PatientContext);
 
   const navigate = useNavigate();
@@ -21,10 +28,20 @@ const Patients: FC = () => {
     setLimit((prevLimit) => prevLimit + 5);
   };
 
+  // функция для диспатча пациента в контекст
   const handleDispatchPatient = (row: CellContext<IPatient, any>) => {
     dispatch({ patient: row.row.original });
-    navigate(`/surveys/${row.row.original.firstName}`);
+    setHasPatientChanged(true);
   };
+
+  // при изменении пациента, сохраняем его в локальное хранилище + переходим по ссылке
+  useEffect(() => {
+    if (hasPatientChanged && patient) {
+      setItem(patient);
+      navigate(`/surveys/${patient.firstName}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [patient, hasPatientChanged]);
 
   const columns = useMemo<ColumnDef<IPatient>[]>(
     () => [
@@ -54,6 +71,7 @@ const Patients: FC = () => {
         accessorKey: "userGender",
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

@@ -15,6 +15,14 @@ export type IOperation = {
   timestamp: string;
 };
 
+export interface IAnswers {
+  answers: {
+    question: string;
+    number: number;
+    answer: string;
+  };
+}
+
 export interface ISurvey {
   survey_name: string;
   operations: IOperation[];

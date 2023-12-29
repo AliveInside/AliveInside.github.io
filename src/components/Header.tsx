@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import logo from "../assets/img/logo.svg";
+import hihi from "../assets/img/hihi.svg";
 import logo_text from "../assets/img/logo_text.png";
 import CustomPopup from "./CustomPopup";
 import { TbLogout } from "react-icons/tb";
@@ -15,7 +16,9 @@ const Header: FC = () => {
           <img src={logo_text} alt="" style={{ height: 100, width: 359 }} />
         </div>
         <div className="header__right">
-          <div className="user">Здравствуйте, я незапланированный</div>
+          {/* <img src={hihi} alt="" style={{ width: 50, height: 50 }} /> */}
+
+          <div className="user">Здравствуйте</div>
           <div className="settings" style={{ marginTop: 10 }}>
             <CustomPopup>
               <span

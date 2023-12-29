@@ -1,57 +1,56 @@
-import React, { FC, useContext, useEffect, useMemo } from "react";
+import React, { FC, useContext, useEffect, useMemo, useState } from "react";
 import Table from "../components/Table/Table";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import moment from "moment";
 import { filterFns } from "../components/Table/filterFn";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { KDC_URL } from "../KDC_URL";
 import { PatientContext } from "../store/PatientStore";
 import { ISurvey } from "../store/types";
-import Survey from "./Survey";
-
-// type Survey = {
-//   userId: string;
-//   survey_type: string;
-// };
+import { useUserSurveys } from "../hooks/useUserSurveys";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const AllUserSurveys: FC = () => {
-  // const { userId } = useParams<{ userId: string }>();
-  // const [surveys, setSurveys] = useState([]);
   const navigate = useNavigate();
+  const [hasSurveyChanged, setHasSurveyChanged] = useState(false);
 
-  const { surveys, patient, dispatch } = useContext(PatientContext);
+  // получаем опрос, пациента и диспатч из контекста
+  const { survey, patient, dispatch } = useContext(PatientContext);
 
-  React.useEffect(() => {
-    const fetchUserSurveys = async () => {
-      console.log(`${KDC_URL}/api/v1/report/user/${patient.userId}/all`);
-      try {
-        const apiUrl = `${KDC_URL}/api/v1/report/user/${patient.userId}/all`;
-        const { data } = await axios.post(apiUrl, { user_id: patient.userId });
-        dispatch({ surveys: data.report });
-      } catch (error) {
-        console.error(
-          "Error fetching pacients surveys:"
-          // error.response.status
-        );
-      }
-    };
+  // функция для получения пациента с локал стора
+  const { getItem } = useLocalStorage("patient");
 
-    fetchUserSurveys();
+  // функция для сохранения опроса в локал стор
+  const { setItem } = useLocalStorage("survey");
+
+  // достаем пациента из локал стора и диспатчим его
+  const dispatchParsedpatient = () => {
+    const parsedData = getItem(patient);
+    dispatch({ patient: parsedData });
+  };
+
+  // диспатчим пациента при первом рендере
+  useEffect(() => {
+    dispatchParsedpatient();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //   window.localStorage.setItem("patient", JSON.stringify(patient));
-  //   const newPatientData = window.localStorage.getItem("patient");
-  //   const parsedFavouritesData = JSON.parse(newPatientData!) ?? [];
-  //   dispatch({ patient: parsedFavouritesData });
-  // }, [patient]);
+  // получаем опросы с бэка
+  const { surveys } = useUserSurveys();
 
+  // функция для диспатча опроса в контекст
   const handleDispatchSurvey = (row: CellContext<ISurvey, any>) => {
     dispatch({ survey: row.row.original });
-    navigate(`/surveys/${patient.firstName}/${row.row.original.survey_name}`);
+    setHasSurveyChanged(true);
   };
+
+  // при изменении опроса, сохраняем его в локальное хранилище + переходим по ссылке
+  useEffect(() => {
+    if (hasSurveyChanged && survey) {
+      setItem(survey);
+      navigate(`/surveys/${patient.firstName}/${survey.survey_name}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [survey, hasSurveyChanged]);
 
   const columns = useMemo<ColumnDef<ISurvey>[]>(
     () => [

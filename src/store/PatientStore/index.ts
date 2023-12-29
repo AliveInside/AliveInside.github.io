@@ -4,7 +4,7 @@ import { PatientContextProps } from "../types";
 const initialState = {
   patients: [],
   patient: {
-    userSnils: "",
+    userSnils: "11",
     firstName: "",
     lastName: "",
     patronymic: "",

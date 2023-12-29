@@ -1,43 +1,27 @@
-import { CellContext, ColumnDef, filterFns } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import Table from "../components/Table/Table";
-import { useParams } from "react-router-dom";
-import { useContext, useEffect, useMemo, useState } from "react";
-import { KDC_URL } from "../KDC_URL";
-import axios from "axios";
+import { useContext, useEffect, useMemo } from "react";
 import { PatientContext } from "../store/PatientStore";
-import moment from "moment";
+import { filterFns } from "../components/Table/filterFn";
+import { useSurvey } from "../hooks/useSurvey";
+import { IAnswers } from "../store/types";
 
-interface IAnswers {
-  answers: {
-    question: string;
-    number: number;
-    answer: string;
-  };
-}
 const Survey = () => {
-  // нужно получить id опроса из всего списка опросов (то есть from AllUserSurveys)
+  // получаем опрос и диспатч из контекста
+  const { survey, dispatch } = useContext(PatientContext);
 
-  const { survey } = useContext(PatientContext);
-
-  const [answers, setAnswers] = useState<IAnswers[]>([]);
-  const [time, setTime] = useState("");
-
+  // получаем опрос из локал стора
   useEffect(() => {
-    const fetchSurvey = async () => {
-      try {
-        const apiUrl = `${KDC_URL}/api/v1/report/operation/${survey.operations[0].id}`;
-        const { data } = await axios.get(apiUrl);
-        console.log(data.answers);
-        setAnswers(data.answers);
-        setTime(data.timestamp);
-      } catch (e) {
-        console.error("Error fetching survey's data:", e);
-        console.log("survey", survey.operations[0].id);
-      }
-    };
+    const surveyData = window.localStorage.getItem("survey");
 
-    fetchSurvey();
+    if (surveyData) {
+      dispatch({ survey: JSON.parse(surveyData) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // получаем данные для опроса с бэка
+  const { answers, time } = useSurvey();
 
   const columns = useMemo<ColumnDef<IAnswers>[]>(
     () => [
@@ -69,7 +53,7 @@ const Survey = () => {
         data={answers}
         columns={columns}
         showGlobalFilter
-        // filterFn={filterFns.contains}
+        filterFn={filterFns.contains}
       />
     </div>
   );
